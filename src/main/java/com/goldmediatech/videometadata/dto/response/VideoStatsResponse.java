@@ -2,7 +2,10 @@ package com.goldmediatech.videometadata.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -27,8 +30,9 @@ public record VideoStatsResponse(
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @JsonProperty("last_updated")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     LocalDateTime lastUpdated
-) {
+) implements Serializable {
     public VideoStatsResponse {
         if (lastUpdated == null) {
             lastUpdated = LocalDateTime.now();

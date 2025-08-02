@@ -1,6 +1,7 @@
 package com.goldmediatech.videometadata.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -57,6 +58,8 @@ public class CacheConfig {
     public ObjectMapper redisObjectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
+        // Configure LocalDateTime serialization
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;
     }
 
@@ -72,8 +75,9 @@ public class CacheConfig {
     @Primary
     @ConditionalOnClass(RedisConnectionFactory.class)
     @ConditionalOnBean(RedisConnectionFactory.class)
-    public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory, ObjectMapper objectMapper) {
+    public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         // Create a custom serializer with proper Jackson configuration
+        ObjectMapper objectMapper = redisObjectMapper();
         GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
         
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
