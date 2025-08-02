@@ -1,0 +1,103 @@
+spring:
+  application:
+    name: video-metadata-service
+  
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+  
+  # H2 Console (for development)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # Security Configuration
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN,USER
+
+# Application Configuration
+app:
+  jwt:
+    secret: ${JWT_SECRET:mySecretKeyForVideoMetadataService2025}
+    expiration: 86400000 # 24 hours in milliseconds
+  
+  # User Management
+  users:
+    - id: 1
+      username: "admin"
+      password: "$2a$10$MrfNWRpGG9p19.HQoHajIudQwGTJoTaduC490JyDUNhpYmHgW0/Iy" # admin123
+      roles: ["ADMIN", "USER"]
+    - id: 2
+      username: "user"
+      password: "$2a$10$sHF5qA5nCdMALlcZi174oubXVeNOc8qJRT1q/3uzs7cNukfypVy8i" # user123
+      roles: ["USER"]
+  
+  # External API Configuration
+  external-apis:
+    mock:
+      base-url: "https://dummyjson.com"
+      enabled: true
+      timeout: 2000
+  
+  # Import Configuration
+  import:
+    batch-size: 100
+    max-retries: 3
+    retry-delay: 1000
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Logging Configuration
+logging:
+  level:
+    com.goldmediatech.videometadata: INFO
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  info:
+    title: Video Metadata Service API
+    description: Backend service for managing and analyzing video metadata from multiple platforms
+    version: 1.0.0
+    contact:
+      name: GoldmediaTech
+      email: support@goldmediatech.com 

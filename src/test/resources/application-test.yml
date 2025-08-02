@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.H2Dialect
+  
+  h2:
+    console:
+      enabled: false
+
+logging:
+  level:
+    com.goldmediatech.videometadata: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+app:
+  jwt:
+    secret: testSecretKeyForTestingPurposesOnly
+    expiration: 3600000 # 1 hour for testing
+  
+  users:
+    - username: "admin"
+      password: "$2a$10$MrfNWRpGG9p19.HQoHajIudQwGTJoTaduC490JyDUNhpYmHgW0/Iy" # admin123
+      roles: ["ADMIN", "USER"]
+    - username: "user"
+      password: "$2a$10$sHF5qA5nCdMALlcZi174oubXVeNOc8qJRT1q/3uzs7cNukfypVy8i" # user123
+      roles: ["USER"]
+  
+  external-apis:
+    mock:
+      enabled: true
+      timeout: 100 # Faster for testing 
