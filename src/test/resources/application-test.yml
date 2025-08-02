@@ -1,31 +1,42 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    url: jdbc:h2:mem:testdb
     driver-class-name: org.h2.Driver
-    username: sa
+    username: SA
     password: 
-  
   jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:
-        format_sql: false
         dialect: org.hibernate.dialect.H2Dialect
-  
   h2:
     console:
-      enabled: false
+      enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
 
-logging:
-  level:
-    com.goldmediatech.videometadata: DEBUG
-    org.springframework.security: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+# Disable Redis for most tests
+spring.autoconfigure.exclude:
+  - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
+# Cache configuration for tests
 app:
+  cache:
+    video-stats-ttl: 600
+    job-stats-ttl: 300
+    video-cache-ttl: 3600
+    job-cache-ttl: 900
   jwt:
     secret: testSecretKeyForTestingPurposesOnly
     expiration: 3600000 # 1 hour for testing
@@ -41,4 +52,11 @@ app:
   external-apis:
     mock:
       enabled: true
-      timeout: 100 # Faster for testing 
+      timeout: 100 # Faster for testing
+
+logging:
+  level:
+    com.goldmediatech.videometadata: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n" 

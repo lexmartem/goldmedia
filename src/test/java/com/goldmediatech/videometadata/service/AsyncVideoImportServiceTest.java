@@ -67,7 +67,6 @@ class AsyncVideoImportServiceTest {
         when(importJobRepository.save(any(ImportJob.class))).thenReturn(mockJob);
         when(mockVideoApiService.getSource()).thenReturn(VideoSource.MOCK);
         when(mockVideoApiService.isAvailable()).thenReturn(true);
-        when(mockVideoApiService.getVideoMetadataBatch(any())).thenReturn(Arrays.asList(null, null, null));
 
         // Act
         CompletableFuture<ImportJob> future = asyncVideoImportService.startAsyncImport(testImportRequest, jobId);

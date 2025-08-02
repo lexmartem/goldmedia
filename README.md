@@ -10,6 +10,7 @@ A Spring Boot application for managing and analyzing video metadata from mock so
 - **Video Querying** with advanced filters and pagination
 - **Video Statistics** and analytics
 - **Job Management** for tracking async import operations
+- **Caching System** with Redis for improved performance
 - **RESTful API** with OpenAPI/Swagger documentation
 - **Comprehensive Testing** with 70%+ code coverage
 - **Production Ready** with health checks and monitoring
@@ -171,6 +172,15 @@ Response:
 - `GET /videos/import/jobs/status/{status}` - Get jobs by status
 - `DELETE /videos/import/jobs/{jobId}` - Cancel a job (ADMIN only)
 - `GET /videos/import/jobs/stats` - Get job statistics
+
+### Cache Management (NEW)
+- `GET /cache/health` - Get cache health status
+- `GET /cache/stats` - Get cache statistics and metrics
+- `DELETE /cache/clear` - Clear all caches (ADMIN only)
+- `DELETE /cache/clear/{cacheName}` - Clear specific cache (ADMIN only)
+- `DELETE /cache/clear/video-stats` - Clear video statistics cache (ADMIN only)
+- `DELETE /cache/clear/job-stats` - Clear job statistics cache (ADMIN only)
+- `POST /cache/warmup` - Warm up caches (ADMIN only)
 
 ## 📚 Complete API Examples
 

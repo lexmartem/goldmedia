@@ -1,5 +1,6 @@
 package com.goldmediatech.videometadata.service;
 
+import com.goldmediatech.videometadata.config.CacheConfig;
 import com.goldmediatech.videometadata.dto.request.ImportRequest;
 import com.goldmediatech.videometadata.entity.ImportJob;
 import com.goldmediatech.videometadata.entity.ImportStatus;
@@ -7,6 +8,8 @@ import com.goldmediatech.videometadata.repository.ImportJobRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +101,7 @@ public class ImportJobService {
      * @param jobId the job ID to cancel
      * @return true if job was cancelled, false if not found or already completed
      */
+    @CacheEvict(value = CacheConfig.JOB_STATS_CACHE, allEntries = true)
     public boolean cancelJob(String jobId) {
         Optional<ImportJob> jobOpt = importJobRepository.findByJobId(jobId);
         if (jobOpt.isPresent()) {
@@ -155,6 +159,7 @@ public class ImportJobService {
      * 
      * @return JobStatistics with counts by status
      */
+    @Cacheable(value = CacheConfig.JOB_STATS_CACHE, keyGenerator = "statsKeyGenerator")
     public JobStatistics getJobStatistics() {
         long totalJobs = importJobRepository.count();
         long pendingJobs = importJobRepository.countByStatus(ImportStatus.PENDING);

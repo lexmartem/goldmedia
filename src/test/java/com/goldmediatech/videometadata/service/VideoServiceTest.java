@@ -149,7 +149,7 @@ class VideoServiceTest {
         // When & Then
         RuntimeException exception = assertThrows(RuntimeException.class, 
                 () -> videoService.importVideos(request));
-        assertEquals("No API service available for source: Mock", exception.getMessage());
+        assertEquals("No API service available for source: MOCK", exception.getMessage());
     }
 
     @Test
