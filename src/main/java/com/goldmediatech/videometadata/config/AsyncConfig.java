@@ -3,52 +3,58 @@ package com.goldmediatech.videometadata.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 /**
- * Configuration for asynchronous processing.
+ * Configuration for asynchronous processing using Java 21 virtual threads.
  * 
- * This configuration sets up thread pools for background video import processing.
+ * This configuration sets up virtual thread executors for background video import processing.
+ * Virtual threads provide better resource utilization and higher concurrency for I/O-bound operations.
  */
 @Configuration
 @EnableAsync
 public class AsyncConfig {
 
     /**
-     * Thread pool executor for video import operations.
+     * Virtual thread executor for video import operations.
      * 
-     * @return Executor for video import tasks
+     * Virtual threads are ideal for I/O-bound operations like external API calls
+     * as they can handle thousands of concurrent operations with minimal resource usage.
+     * 
+     * @return Executor using virtual threads for video import tasks
      */
     @Bean("videoImportExecutor")
     public Executor videoImportExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(2);
-        executor.setMaxPoolSize(5);
-        executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("video-import-");
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(60);
-        executor.initialize();
-        return executor;
+        // Use virtual threads with custom naming
+        ThreadFactory threadFactory = Thread.ofVirtual()
+            .name("video-import-", 0)
+            .factory();
+        return task -> {
+            Thread thread = threadFactory.newThread(task);
+            thread.start();
+        };
     }
 
     /**
-     * Thread pool executor for reactive processing operations.
+     * Virtual thread executor for reactive processing operations.
      * 
-     * @return Executor for reactive processing tasks
+     * Virtual threads work well with reactive programming patterns and can handle
+     * high concurrency for background processing tasks.
+     * 
+     * @return Executor using virtual threads for reactive processing tasks
      */
     @Bean("reactiveProcessorExecutor")
     public Executor reactiveProcessorExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(200);
-        executor.setThreadNamePrefix("reactive-processor-");
-        executor.setWaitForTasksToCompleteOnShutdown(true);
-        executor.setAwaitTerminationSeconds(60);
-        executor.initialize();
-        return executor;
+        // Use virtual threads with custom naming
+        ThreadFactory threadFactory = Thread.ofVirtual()
+            .name("reactive-processor-", 0)
+            .factory();
+        return task -> {
+            Thread thread = threadFactory.newThread(task);
+            thread.start();
+        };
     }
 } 
